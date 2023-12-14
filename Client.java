@@ -1,28 +1,22 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Client{
+public class Client {
     private Socket socket;
     private DataOutputStream out;
-
     private Scanner in;
-    
+
     public Client(){
         try{
             socket = new Socket("127.0.0.1", Server.PORT);
             out = new DataOutputStream(socket.getOutputStream());
             in = new Scanner(System.in);
             writeMessages();
-        } catch(UnknownHostException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch(IOException e){
-            e.printStackTrace();
-        } 
-        
-        
+        }
     }
 
     private void writeMessages() throws IOException {
@@ -38,7 +32,7 @@ public class Client{
         socket.close();
         out.close();
         in.close();
-    }   
+    }
 
     public static void main(String[] args) {
         new Client();

@@ -6,46 +6,33 @@ import java.net.Socket;
 
 public class Server {
     private ServerSocket server;
-    private DataInputStream in;
-    public static final int PORT = 8080;
-    static final String STOP_STRING = "##";
+    public static final int PORT = 3030;
+    public static final String STOP_STRING = "##";
+    private int index = 0;
 
     public Server(){
         try{
             server = new ServerSocket(PORT);
-            iniConnections();
-        }
-        catch(IOException e){
+            while(true) iniConnections();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void iniConnections() throws IOException{
+    private void iniConnections() throws IOException {
         Socket clientSocket = server.accept();
-        in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        readMessages();
-        close();
+
+        if(clientSocket.isConnected())
+        new Thread(()->{
+            index++;
+            ConnectedClient client = new ConnectedClient(clientSocket,index);
+            client.readMessages();
+            client.close();
+        }).start();
     }
 
-    private void close() {
-        try{
-            in.close();
-            server.close();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void readMessages() throws IOException{
-        String line = "";
-        while(!line.equals(STOP_STRING)){
-            line = in.readUTF();
-            System.out.println(line);
-        }  
-    }
 
     public static void main(String[] args) {
         new Server();
     }
-}  
+}
